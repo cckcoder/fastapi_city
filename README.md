@@ -1,10 +1,14 @@
 # Lib for use
 pip install fastapi
 pip install hypercorn
+pip install requests
 
-#Cli
+# Cli
 * hypercorn main:app --reload
 
-#Swagger
+# Swagger
 localhost:8000/docs
 localhost:8000/redocs
+
+# Resource
+http://worldtimeapi.org/

@@ -17,11 +17,28 @@ def index():
 
 @app.get('/cities')
 def get_cities():
-    return db
+    results = []
+    for city in db:
+        r = requests.get(f'http://worldtimeapi.org/api/timezone/{city.timezone}')
+        current_time = r.json()['datetime']
+        results.append({
+            'name': city.name,
+            'timezone': city.timezone,
+            'current_time': current_time
+        })
+    return results
 
 @app.get('/cities/{city_id}')
 def get_city(city_id: int):
-    return db[city_id - 1]
+    city = db[city_id - 1] 
+    r = requests.get(f'http://worldtimeapi.org/api/timezone/{city.timezone}')
+    current_time = r.json()['datetime']
+    city_data = {
+        'name': city.name,
+        'time zone': city.timezone,
+        'current_time': current_time
+    } 
+    return city_data
 
 @app.post('/cities')
 def create_city(city: City):
@@ -31,4 +48,4 @@ def create_city(city: City):
 @app.delete('/cities/{city_id}')
 def delete_city(city_id: int):
     db.pop(city_id - 1)
-    return {}
+    return {}   
