@@ -49,8 +49,8 @@ async def create_city(city: cityin_pydantic):
 
 
 @app.delete('/cities/{city_id}')
-def delete_city(city_id: int):
-    db.pop(city_id - 1)
+async def delete_city(city_id: int):
+    delete_count = await City.filter(id=city_id).delete()
     return {}
 
 
