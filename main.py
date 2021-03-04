@@ -48,6 +48,12 @@ async def create_city(city: cityin_pydantic):
     return await city_pydantic.from_tortoise_orm(city_obj)
 
 
+@app.put('/cities/{city_id}')
+async def update_city(city_id: int, city: cityin_pydantic):
+    await City.filter(id=city_id).update(**city.dict(exclude_unset=True))
+    return await city_pydantic.from_queryset_single(City.get(id=city_id))
+
+
 @app.delete('/cities/{city_id}')
 async def delete_city(city_id: int):
     delete_count = await City.filter(id=city_id).delete()
