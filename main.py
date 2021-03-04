@@ -38,16 +38,8 @@ async def get_cities():
 
 
 @app.get('/cities/{city_id}')
-def get_city(city_id: int):
-    city = db[city_id - 1]
-    r = requests.get(f'http://worldtimeapi.org/api/timezone/{city.timezone}')
-    current_time = r.json()['datetime']
-    city_data = {
-        'name': city.name,
-        'time zone': city.timezone,
-        'current_time': current_time
-    }
-    return city_data
+async def get_city(city_id: int):
+    return await city_pydantic.from_queryset_single(City.get(id=city_id))
 
 
 @app.post('/cities')
