@@ -14,6 +14,14 @@ class City(Model):
     name = fields.CharField(50, unique=True)
     timezone = fields.CharField(50)
 
+    def current_time(self) -> str:
+        r = requests.get(f'http://worldtimeapi.org/api/timezone/{self.timezone}')
+        current_time = r.json()['datetime']
+        return current_time
+
+    class PydanticMeta:
+        computed = ('current_time', )
+
 
 city_pydantic = pydantic_model_creator(City, name='City')
 cityin_pydantic = pydantic_model_creator(City, name="CityIn", exclude_readonly=True)
@@ -25,17 +33,8 @@ def index():
 
 
 @app.get('/cities')
-def get_cities():
-    results = []
-    for city in db:
-        r = requests.get(f'http://worldtimeapi.org/api/timezone/{city.timezone}')
-        current_time = r.json()['datetime']
-        results.append({
-            'name': city.name,
-            'timezone': city.timezone,
-            'current_time': current_time
-        })
-    return results
+async def get_cities():
+    return await city_pydantic.from_queryset(City.all())
 
 @app.get('/cities/{city_id}')
 def get_city(city_id: int):
