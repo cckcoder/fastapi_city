@@ -36,6 +36,7 @@ def index():
 async def get_cities():
     return await city_pydantic.from_queryset(City.all())
 
+
 @app.get('/cities/{city_id}')
 def get_city(city_id: int):
     city = db[city_id - 1]
@@ -47,6 +48,7 @@ def get_city(city_id: int):
         'current_time': current_time
     }
     return city_data
+
 
 @app.post('/cities')
 async def create_city(city: cityin_pydantic):
